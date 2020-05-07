@@ -1,22 +1,27 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import styled from '@emotion/styled';
 
 import InlineSvg from 'app/components/inlineSvg';
+import {Theme} from 'app/utils/theme';
 
-const getMarginLeft = p => {
-  if (!p.inline) {
-    return '';
-  }
-  return `margin-left: ${p.size === 'small' ? '0.25em' : '0.5em'};`;
+type Props = React.HTMLAttributes<HTMLDivElement> & {
+  priority?: keyof Theme['badge'] | keyof Theme['alert'];
+  size?: string;
+  icon?: string;
+  border?: boolean;
+  inline?: boolean;
 };
 
-const getBorder = p =>
-  p.border
-    ? `border: 1px solid ${
-        p.priority ? p.theme.alert[p.priority].border : p.theme.gray1
-      };`
-    : '';
+type StyleFucProps = Props & {theme: Theme};
+
+const getMarginLeft = (p: StyleFucProps) =>
+  p.inline ? `margin-left: ${p.size === 'small' ? '0.25em' : '0.5em'};` : '';
+
+const getPriority = (p: StyleFucProps) =>
+  p.priority ? p.theme.alert[p.priority] ?? p.theme.badge[p.priority] ?? null : null;
+
+const getBorder = (p: StyleFucProps) =>
+  p.border ? `border: 1px solid ${getPriority(p)?.border ?? p.theme.gray1};` : '';
 
 const Tag = styled(
   ({
@@ -27,7 +32,7 @@ const Tag = styled(
     size: _size,
     border: _border,
     ...props
-  }) => (
+  }: Props) => (
     <div {...props}>
       {icon && <StyledInlineSvg src={icon} size="12px" />}
       {children}
@@ -37,28 +42,19 @@ const Tag = styled(
   display: inline-flex;
   box-sizing: border-box;
   padding: ${p => (p.size === 'small' ? '0.1em 0.4em 0.2em' : '0.35em 0.8em 0.4em')};
-  font-size: 75%;
+  font-size: ${p => p.theme.fontSizeExtraSmall};
   line-height: 1;
-  color: ${p => (p.priority ? '#fff' : p.gray5)};
+  color: ${p => (p.priority ? '#fff' : p.theme.gray5)};
   text-align: center;
   white-space: nowrap;
   vertical-align: middle;
   border-radius: ${p => (p.size === 'small' ? '0.25em' : '2em')};
   text-transform: lowercase;
   font-weight: ${p => (p.size === 'small' ? 'bold' : 'normal')};
-  background: ${p =>
-    p.priority ? p.theme.alert[p.priority].background : p.theme.offWhite2};
+  background: ${p => getPriority(p)?.background ?? p.theme.offWhite2};
   ${p => getBorder(p)};
   ${p => getMarginLeft(p)};
 `;
-
-Tag.propTypes = {
-  priority: PropTypes.string,
-  size: PropTypes.string,
-  border: PropTypes.bool,
-  icon: PropTypes.string,
-  inline: PropTypes.bool,
-};
 
 const StyledInlineSvg = styled(InlineSvg)`
   margin-right: 4px;

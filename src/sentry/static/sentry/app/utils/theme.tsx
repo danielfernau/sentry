@@ -112,10 +112,25 @@ const alert = {
     iconColor: colors.red,
     background: colors.red,
   },
+} as const;
+
+const badge = {
+  alpha: {
+    background: `linear-gradient(90deg, ${colors.orangeLight}, ${colors.orangeDark})`,
+    indicatorColor: colors.orange,
+    border: null,
+  },
   beta: {
     background: `linear-gradient(90deg, ${colors.pink}, ${colors.purple})`,
+    indicatorColor: colors.purple,
+    border: null,
   },
-} as const;
+  new: {
+    background: `linear-gradient(90deg, ${colors.green}, ${colors.greenDark})`,
+    indicatorColor: colors.green,
+    border: null,
+  },
+};
 
 const aliases = {
   textColor: colors.gray5,
@@ -298,6 +313,7 @@ const theme = {
   ...aliases,
 
   alert,
+  badge,
   button,
 
   charts: {
